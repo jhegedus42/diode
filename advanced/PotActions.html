@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.2" data-chapter-title="Stateful Actions" data-filepath="advanced/PotActions.md" data-basepath=".." data-revision="Mon May 16 2016 15:13:03 GMT+0300 (FLE Daylight Time)">
+    <div class="book" data-level="2.2" data-chapter-title="Stateful Actions" data-filepath="advanced/PotActions.md" data-basepath=".." data-revision="Mon Jun 20 2016 11:42:33 GMT+0300 (FLE Daylight Time)">
     
 
 <div class="book-summary">
@@ -319,15 +319,16 @@
                         <h1 id="stateful-actions">Stateful Actions</h1>
 <p>After you start using <code>Pot</code> (for medicinal purposes!) in your application, you will soon realize you have a lot of actions covering various aspects of the
 loading process.</p>
-<pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> LoadTodos
-<span class="token keyword">case</span> <span class="token keyword">class</span> UpdateTodos
-<span class="token keyword">case</span> <span class="token keyword">class</span> LoadTodosFailed
-<span class="token keyword">case</span> <span class="token keyword">class</span> LoadTodosPending
+<pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> LoadTodos <span class="token keyword">extends</span> Action
+<span class="token keyword">case</span> <span class="token keyword">class</span> UpdateTodos <span class="token keyword">extends</span> Action
+<span class="token keyword">case</span> <span class="token keyword">class</span> LoadTodosFailed <span class="token keyword">extends</span> Action
+<span class="token keyword">case</span> <span class="token keyword">class</span> LoadTodosPending <span class="token keyword">extends</span> Action
 </code></pre>
 <p>Because this is such a common pattern, wouldn&apos;t it be nice to abstract this functionality into a trait and reuse it for all your <code>Pot</code> actions?</p>
 <h2 id="potaction"><code>PotAction</code></h2>
 <p>The <code>PotAction</code> trait simplifies creation of stateful actions for <code>Pot</code> data. To use it, simply define a case class extending <code>PotAction</code> and define the <code>next</code>
-function to build a new instance of your action.</p>
+function to build a new instance of your action. The <code>PotAction</code> trait extends Diode&apos;s <code>Action</code> trait, so all your classes using it will automatically be
+valid for dispatching.</p>
 <pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> UpdateTodos<span class="token punctuation">(</span>result<span class="token operator">:</span> Pot<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span> <span class="token operator">=</span> Empty<span class="token punctuation">)</span> <span class="token keyword">extends</span> PotAction<span class="token punctuation">[</span>Todos<span class="token punctuation">,</span> UpdateTodos<span class="token punctuation">]</span> <span class="token punctuation">{</span>
   <span class="token keyword">def</span> next<span class="token punctuation">(</span>newResult<span class="token operator">:</span> Pot<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">=</span> UpdateTodos<span class="token punctuation">(</span>newResult<span class="token punctuation">)</span>
 <span class="token punctuation">}</span>

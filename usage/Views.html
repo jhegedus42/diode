@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.4" data-chapter-title="Views" data-filepath="usage/Views.md" data-basepath=".." data-revision="Mon May 16 2016 15:13:03 GMT+0300 (FLE Daylight Time)">
+    <div class="book" data-level="1.4" data-chapter-title="Views" data-filepath="usage/Views.md" data-basepath=".." data-revision="Mon Jun 20 2016 11:42:33 GMT+0300 (FLE Daylight Time)">
     
 
 <div class="book-summary">
@@ -396,6 +396,9 @@ expensive re-computations.</p>
 </code></pre>
 <p>If only <code>selected</code> is changed, we don&apos;t need to rebuild the tree as its structure has stayed the same. We do, however,
 need to re-render the tree to reflect this change.</p>
+<p>Warning! You must not dispatch actions while your listener function is running. This is because listeners are called
+while the previous dispatch is still being processed. If you have a need to dispatch actions in the listener, use a
+deferred call with, for example, <code>RunAfter</code>.</p>
 
                     
                     </section>

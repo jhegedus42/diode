@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.5" data-chapter-title="Async Effects" data-filepath="usage/Effects.md" data-basepath=".." data-revision="Mon May 16 2016 15:13:03 GMT+0300 (FLE Daylight Time)">
+    <div class="book" data-level="1.5" data-chapter-title="Async Effects" data-filepath="usage/Effects.md" data-basepath=".." data-revision="Mon Jun 20 2016 11:42:33 GMT+0300 (FLE Daylight Time)">
     
 
 <div class="book-summary">
@@ -329,12 +329,13 @@ them from the action handler with the updated model.</p>
 <p>In an Effect we <em>describe</em> a computation instead of directly <em>executing</em> it. It&apos;s quite similar to the <code>IO</code> concept in
 Scalaz/Haskell, containing a function that returns a <code>Future[AnyRef]</code>.</p>
 <p>The action returned by the <code>Future</code> is automatically dispatched by the Circuit. If your effect doesn&apos;t need anything
-dispatched, return a <code>None</code>.</p>
+dispatched, return a <code>NoAction</code>. The same type checking rules apply to Effects as to normal action dispatching, so the type returned by your effect must have
+a valid <code>ActionType</code> type class implicitly available.</p>
 <h3 id="using-effects">Using Effects</h3>
 <p>To create an effect you need a function that runs something asynchronously, for example performing an Ajax call.</p>
 <pre><code class="lang-scala"><span class="token keyword">import</span> org<span class="token punctuation">.</span>scalajs<span class="token punctuation">.</span>dom<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>Ajax
 
-<span class="token keyword">case</span> <span class="token keyword">class</span> NewMessages<span class="token punctuation">(</span>msgs<span class="token operator">:</span> <span class="token builtin">String</span><span class="token punctuation">)</span>
+<span class="token keyword">case</span> <span class="token keyword">class</span> NewMessages<span class="token punctuation">(</span>msgs<span class="token operator">:</span> <span class="token builtin">String</span><span class="token punctuation">)</span> <span class="token keyword">extends</span> Action
 
 <span class="token keyword">def</span> loadMessagesEffect<span class="token punctuation">(</span>user<span class="token operator">:</span> <span class="token builtin">String</span><span class="token punctuation">)</span> <span class="token operator">=</span> 
   Effect<span class="token punctuation">(</span>Ajax<span class="token punctuation">.</span>get<span class="token punctuation">(</span>s<span class="token string">&quot;/user/messages?id=$user&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>map<span class="token punctuation">(</span>r <span class="token keyword">=&gt;</span> NewMessages<span class="token punctuation">(</span>r<span class="token punctuation">.</span>responseText<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>

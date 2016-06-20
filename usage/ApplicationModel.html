@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.1" data-chapter-title="Application Model" data-filepath="usage/ApplicationModel.md" data-basepath=".." data-revision="Mon May 16 2016 15:13:03 GMT+0300 (FLE Daylight Time)">
+    <div class="book" data-level="1.1" data-chapter-title="Application Model" data-filepath="usage/ApplicationModel.md" data-basepath=".." data-revision="Mon Jun 20 2016 11:42:33 GMT+0300 (FLE Daylight Time)">
     
 
 <div class="book-summary">
@@ -468,7 +468,7 @@ example above, the model would be defined as</p>
 <span class="token keyword">val</span> rootReader <span class="token operator">=</span> <span class="token keyword">new</span> RootModelR<span class="token punctuation">(</span>model<span class="token punctuation">)</span>
 
 <span class="token comment" spellcheck="true">// create a reference to a Product</span>
-<span class="token keyword">def</span> productRef<span class="token punctuation">(</span>id<span class="token operator">:</span> <span class="token builtin">String</span><span class="token punctuation">)</span> <span class="token operator">=</span> RefTo<span class="token punctuation">(</span>rootReader<span class="token punctuation">.</span>zoom<span class="token punctuation">(</span>_<span class="token punctuation">.</span>products<span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">,</span> UpdateProduct<span class="token punctuation">(</span>id<span class="token punctuation">,</span> _<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> productRef<span class="token punctuation">(</span>id<span class="token operator">:</span> <span class="token builtin">String</span><span class="token punctuation">)</span> <span class="token operator">=</span> RefTo<span class="token punctuation">(</span>rootReader<span class="token punctuation">.</span>zoom<span class="token punctuation">(</span>_<span class="token punctuation">.</span>products<span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> UpdateProduct<span class="token punctuation">(</span>id<span class="token punctuation">,</span> _<span class="token punctuation">)</span><span class="token punctuation">)</span>
 </code></pre>
 <p>The <code>RefTo</code> paradigm is especially useful with Diode&apos;s <a href="../advanced/PotCollection.html">async collections</a> as you can
 easily reference data that has not yet been loaded into the client, but will be as soon as the reference is accessed.

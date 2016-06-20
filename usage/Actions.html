@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.2" data-chapter-title="Actions" data-filepath="usage/Actions.md" data-basepath=".." data-revision="Mon May 16 2016 15:13:03 GMT+0300 (FLE Daylight Time)">
+    <div class="book" data-level="1.2" data-chapter-title="Actions" data-filepath="usage/Actions.md" data-basepath=".." data-revision="Mon Jun 20 2016 11:42:33 GMT+0300 (FLE Daylight Time)">
     
 
 <div class="book-summary">
@@ -320,26 +320,47 @@
 <p><img src="../images/architecture-action.png" style="float: right; padding: 10px">
 Actions hold information on how to update the model and they are the <em>only</em> way to make these updates. Basically the current model is a result of all previous
 actions, much like in <a href="http://martinfowler.com/eaaDev/EventSourcing.html" target="_blank">event sourcing</a>.</p>
-<p>In Diode actions can be anything (extending <code>AnyRef</code>) but typically case classes are used for easy pattern matching.</p>
 <h2 id="designing-actions">Designing Actions</h2>
 <p>Actions are very much application specific but can generally be classified into <em>global</em> and <em>targeted</em> actions. A global action is something like the examples
 below, always changing the same part of the model.</p>
-<pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> Increase<span class="token punctuation">(</span>amount<span class="token operator">:</span> <span class="token builtin">Int</span><span class="token punctuation">)</span>
-<span class="token keyword">case</span> <span class="token keyword">class</span> Decrease<span class="token punctuation">(</span>amount<span class="token operator">:</span> <span class="token builtin">Int</span><span class="token punctuation">)</span>
-<span class="token keyword">case</span> <span class="token keyword">object</span> Reset
+<pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> Increase<span class="token punctuation">(</span>amount<span class="token operator">:</span> <span class="token builtin">Int</span><span class="token punctuation">)</span> <span class="token keyword">extends</span> Action
+<span class="token keyword">case</span> <span class="token keyword">class</span> Decrease<span class="token punctuation">(</span>amount<span class="token operator">:</span> <span class="token builtin">Int</span><span class="token punctuation">)</span> <span class="token keyword">extends</span> Action
+<span class="token keyword">case</span> <span class="token keyword">object</span> Reset <span class="token keyword">extends</span> Action
 </code></pre>
 <p>Targeted actions, on the other hand, can change different parts of the model depending on the value of the action. For example if your data is in a tree, you
 would need to know what part of the tree should be changed. One option is to have unique IDs for data and search for the ID in the action handler, but typically
 it&apos;s more efficient and easier to use a <em>path</em> to the data.</p>
 <pre><code class="lang-scala"><span class="token comment" spellcheck="true">// path is defined by a sequence of identifiers</span>
-<span class="token keyword">case</span> <span class="token keyword">class</span> AddNode<span class="token punctuation">(</span>path<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">,</span> node<span class="token operator">:</span> FileNode<span class="token punctuation">)</span>
-<span class="token keyword">case</span> <span class="token keyword">class</span> RemoveNode<span class="token punctuation">(</span>path<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
-<span class="token keyword">case</span> <span class="token keyword">class</span> ReplaceNode<span class="token punctuation">(</span>path<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">,</span> node<span class="token operator">:</span> FileNode<span class="token punctuation">)</span>
-<span class="token keyword">case</span> <span class="token keyword">class</span> Select<span class="token punctuation">(</span>selected<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">case</span> <span class="token keyword">class</span> AddNode<span class="token punctuation">(</span>path<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">,</span> node<span class="token operator">:</span> FileNode<span class="token punctuation">)</span> <span class="token keyword">extends</span> Action
+<span class="token keyword">case</span> <span class="token keyword">class</span> RemoveNode<span class="token punctuation">(</span>path<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">extends</span> Action
+<span class="token keyword">case</span> <span class="token keyword">class</span> ReplaceNode<span class="token punctuation">(</span>path<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">,</span> node<span class="token operator">:</span> FileNode<span class="token punctuation">)</span> <span class="token keyword">extends</span> Action
+<span class="token keyword">case</span> <span class="token keyword">class</span> Select<span class="token punctuation">(</span>selected<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">extends</span> Action
 </code></pre>
 <p>If you need an action to update multiple independent parts of your model, it&apos;s usually better to break it down into several consecutive actions. This way each
 action handler can focus on its own part of the model and the logic is kept simple and easy to reason about. Actions are processed in the order they are
 dispatched, so you can be sure your sequence of actions are processed in correct order.</p>
+<h2 id="typesafe-actions">Typesafe actions</h2>
+<p>In Diode actions can be anything but typically case classes are used for easy pattern matching. By anything, we mean anything with a valid
+<code>ActionType[A]</code> type class in scope. Diode uses this type class to implicitly verify that the dispatched action is actually a valid action. It is up
+to you as the developer to decide what actions are valid by providing appropriate type class instances.</p>
+<p>Typically a good way to accomplish this is to create a single base trait (say <code>Action</code>) for all your actions and provide an implicit
+<code>ActionType[Action]</code> for it in the companion object.</p>
+<pre><code class="lang-scala"><span class="token keyword">trait</span> Action
+
+<span class="token keyword">object</span> Action <span class="token punctuation">{</span>
+  <span class="token keyword">implicit</span> <span class="token keyword">object</span> actionType <span class="token keyword">extends</span> ActionType<span class="token punctuation">[</span>Action<span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>To make your life easier, Diode provides such a base trait by default so you can start using it right away!</p>
+<p>If you want to forgo type safety altogether, you can import the provided <code>AnyAction</code> implicit, which allows <code>Any</code> to be used as action. This can be used
+for adapting legacy Diode code to a new version.</p>
+<pre><code class="lang-scala"><span class="token keyword">import</span> diode<span class="token punctuation">.</span>AnyAction<span class="token punctuation">.</span>_
+</code></pre>
+<h2 id="special-actions">Special actions</h2>
+<p>Diode defines two special actions: <code>ActionBatch</code> and <code>NoAction</code>, both extending the <code>Action</code> trait.</p>
+<p>Use <code>ActionBatch</code> to create a batch of actions that are dispatched in sequence without calling any model update listeners in between. This can be used as an
+optimization.</p>
+<p><code>NoAction</code>, as its name implies, performs no action and can be used as a result in purely side-effecting Effects.</p>
 
                     
                     </section>
