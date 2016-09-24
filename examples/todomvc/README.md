@@ -12,3 +12,6 @@ See [live demonstration](http://ochrons.github.io/diode/examples/todomvc/)
 1. Wait for update/compilation to complete (you'll see `1. Waiting for source changes... (press enter to interrupt)`)
 1. Navigate to [http://localhost:12345/target/scala-2.11/classes/index.html](http://localhost:12345/target/scala-2.11/classes/index.html)
 1. Press `Enter` in console to quit
+
+
+Note: the Diode library needs to be installed locally with `package`, `publishLocal`, otherwise you might get `unresolved dependency` error
